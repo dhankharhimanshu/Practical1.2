@@ -1,59 +1,48 @@
-# Practical1.2
+DROP TABLE IF EXISTS Courses;
+DROP TABLE IF EXISTS Departments;
 
-A repository for practical exercises, assignments, or projects related to course module "Practical 1.2".
+CREATE TABLE Departments (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50) UNIQUE -- ensures no duplicate names
+);
 
-## Table of Contents
 
-- [Overview](#overview)
-- [Getting Started](#getting-started)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(100),
+    dept_id INT,
+    FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
+);
 
-## Overview
 
-This repository contains code, resources, and documentation for the Practical 1.2 assignments. It is intended to help students and contributors understand and complete the tasks associated with this module.
+INSERT INTO Departments (dept_id, dept_name) VALUES
+(1, 'Computer Science'),
+(2, 'Electrical'),
+(3, 'Mechanical'),
+(4, 'Civil'),
+(5, 'Electronics');
 
-## Getting Started
 
-1. **Clone the repository**  
-   ```bash
-   git clone https://github.com/dhankharhimanshu/Practical1.2.git
-   ```
-2. **Navigate to the project directory**  
-   ```bash
-   cd Practical1.2
-   ```
+INSERT INTO Courses (course_id, course_name, dept_id) VALUES
+(101, 'DBMS', 1),
+(102, 'Operating Systems', 1),
+(103, 'Power Systems', 2),
+(104, 'Digital Circuits', 2),
+(105, 'Thermodynamics', 3),
+(106, 'Fluid Mechanics', 3),
+(107, 'Structural Engineering', 4),
+(108, 'Surveying', 4),
+(109, 'Embedded Systems', 5),
+(110, 'VLSI Design', 5);
 
-3. **Install dependencies**  
-   (Add instructions here if your project requires installation of dependencies.)
-
-## Usage
-
-- Explore the folders and files for individual practical tasks.
-- Follow comments and documentation in code files for guidance.
-- (Add specifics about running scripts or using files, if applicable.)
-
-## Contributing
-
-Contributions, issues, and feature requests are welcome!  
-Feel free to check the [issues page](https://github.com/dhankharhimanshu/Practical1.2/issues) if you want to contribute.
-
-1. Fork the repository.
-2. Create your feature branch (`git checkout -b feature/YourFeature`).
-3. Commit your changes (`git commit -am 'Add a new feature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Open a Pull Request.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-Repository owner: [dhankharhimanshu](https://github.com/dhankharhimanshu)
-
----
-
-> *Feel free to update this README file with project-specific details as your repository evolves!*
+SELECT dept_name
+FROM Departments
+WHERE dept_id IN (
+    SELECT dept_id
+    FROM Courses
+    GROUP BY dept_id
+    HAVING COUNT(course_id) > 2
+);
+-- Just run the query directly (no GRANT needed)
+SELECT * FROM Courses;   
+ bhai ye practice 2 h dbms ise aaj submit kardo aaj last date  h phir portal ni khulega
