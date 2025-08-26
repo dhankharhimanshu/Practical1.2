@@ -1,48 +1,109 @@
-DROP TABLE IF EXISTS Courses;
-DROP TABLE IF EXISTS Departments;
+DROP TABLE IF EXISTS FeePayments;
 
-CREATE TABLE Departments (
-    dept_id INT PRIMARY KEY,
-    dept_name VARCHAR(50) UNIQUE -- ensures no duplicate names
+CREATE TABLE FeePayments (
+    payment_id   INT PRIMARY KEY,
+    student_name VARCHAR(100) NOT NULL,
+    amount       DECIMAL(10,2) CHECK (amount > 0),
+    payment_date DATE
 );
 
+START TRANSACTION;
 
-CREATE TABLE Courses (
-    course_id INT PRIMARY KEY,
-    course_name VARCHAR(100),
-    dept_id INT,
-    FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
-);
+INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+VALUES (1, 'Ashish', 5000.00, '2024-06-01');
 
+INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+VALUES (2, 'Smaran', 4500.00, '2024-06-02');
 
-INSERT INTO Departments (dept_id, dept_name) VALUES
-(1, 'Computer Science'),
-(2, 'Electrical'),
-(3, 'Mechanical'),
-(4, 'Civil'),
-(5, 'Electronics');
+INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+VALUES (3, 'Vaibhav', 5500.00, '2024-06-03');
 
+COMMIT;
 
-INSERT INTO Courses (course_id, course_name, dept_id) VALUES
-(101, 'DBMS', 1),
-(102, 'Operating Systems', 1),
-(103, 'Power Systems', 2),
-(104, 'Digital Circuits', 2),
-(105, 'Thermodynamics', 3),
-(106, 'Fluid Mechanics', 3),
-(107, 'Structural Engineering', 4),
-(108, 'Surveying', 4),
-(109, 'Embedded Systems', 5),
-(110, 'VLSI Design', 5);
+SELECT * FROM FeePayments;
 
-SELECT dept_name
-FROM Departments
-WHERE dept_id IN (
-    SELECT dept_id
-    FROM Courses
-    GROUP BY dept_id
-    HAVING COUNT(course_id) > 2
-);
--- Just run the query directly (no GRANT needed)
-SELECT * FROM Courses;   
- bhai ye practice 2 h dbms ise aaj submit kardo aaj last date  h phir portal ni khulega
+START TRANSACTION;
+
+INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+VALUES (4, 'Kiran', 4000.00, '2024-06-04');
+
+INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+VALUES (1, 'Ashish', -2000.00, '2024-06-05');
+
+ROLLBACK;
+
+SELECT * FROM FeePayments;
+
+CREATE PROCEDURE demo_part_b()
+BEGIN
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+
+    ROLLBACK;
+  END;
+
+  START TRANSACTION;
+  INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+  VALUES (4, 'Kiran', 4000.00, '2024-06-04');
+
+  INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+  VALUES (1, 'Ashish', -2000.00, '2024-06-05');
+
+  COMMIT;
+DELIMITER ;
+
+CALL demo_part_b();
+
+SELECT * FROM FeePayments;
+
+START TRANSACTION;
+
+INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+VALUES (5, 'Rahul', 4700.00, '2024-06-06');
+
+INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+VALUES (6, NULL, 3000.00, '2024-06-07');
+
+ROLLBACK;
+
+SELECT * FROM FeePayments;
+
+CREATE PROCEDURE demo_part_c()
+BEGIN
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+  END;
+
+  START TRANSACTION;
+  INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+  VALUES (5, 'Rahul', 4700.00, '2024-06-06');
+
+  INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+  VALUES (6, NULL, 3000.00, '2024-06-07');
+
+  COMMIT;
+DELIMITER ;
+
+CALL demo_part_c();
+
+SELECT * FROM FeePayments;
+
+START TRANSACTION;
+INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+VALUES (7, 'Meena', 5200.00, '2024-06-08');
+COMMIT;
+
+SELECT * FROM FeePayments;
+
+START TRANSACTION;
+INSERT INTO FeePayments (payment_id, student_name, amount, payment_date)
+VALUES (8, 'Zara', 5100.00, '2024-06-09');
+COMMIT;
+
+SELECT COUNT(*) FROM FeePayments WHERE payment_id = 8; 
+COMMIT;
+
+START TRANSACTION;
+SELECT COUNT(*) FROM FeePayments WHERE payment_id = 8;  
+COMMIT;
